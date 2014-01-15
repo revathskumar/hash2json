@@ -1,0 +1,14 @@
+%h1= "Ruby Hash to Json"
+%section.container
+  %form{method: 'get'}
+    %table
+      %tr
+        %td
+          %textarea{name: 'q', rows: 30, cols: 60}= hash
+        %td
+          %textarea{name: 'json', rows: 30, cols: 60}= json
+      %tr
+        %td{colspan: 2}
+          %input{type: 'submit', value: '.to_json'}
+
+
