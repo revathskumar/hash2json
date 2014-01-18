@@ -10,8 +10,11 @@ Cuba.define do
     on root do
       hash = ''
       on param('q') do | hash |
-        json = ''
-        json = JSON.parse(hash.gsub('=>', ' : ')).to_json if hash
+        json = if hash && hash[ /=>/ ]
+          JSON.parse(hash.gsub('nil', '').gsub('=>', ' : ')).to_json
+        else
+          hash
+        end
         res.write render('templates/home.haml', hash: hash , json: json)
       end
       res.write render('templates/home.haml', hash: '' , json: '')
