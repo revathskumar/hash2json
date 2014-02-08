@@ -1,14 +1,31 @@
-%h1= "Ruby Hash to Json"
-%section.container
-  %form{method: 'get'}
-    %table
-      %tr
-        %td
-          %textarea{name: 'q', rows: 30, cols: 60}= hash
-        %td
-          %textarea{name: 'json', rows: 30, cols: 60}= json
-      %tr
-        %td{colspan: 2}
-          %input{type: 'submit', value: '.to_json'}
+%html
+  %head
+    :css
+      #editor{
+        top: 80px;
+        width: 50%;
+        height: 100%;
+      }
+  %body
+    %h1= "Ruby Hash to Json"
+    %section.container
+      %form{method: 'get'}
+        %table
+          %tr
+            %td
+              %textarea{name: 'q', rows: 30, cols: 60}= hash
+            %td.editor_wrapper
+              %div#editor
+          %tr
+            %td{colspan: 2}
+              %input{type: 'submit', value: '.to_json'}
 
+    %script{src: '//d1n0x3qji82z53.cloudfront.net/src-min-noconflict/ace.js'}
 
+    :javascript
+      var editor = ace.edit("editor");
+      editor.getSession().setMode("ace/mode/json");
+      editor.setTheme("ace/theme/twilight");
+      editor.getSession().setTabSize(4);
+      editor.getSession().setUseWrapMode(true);
+      editor.setValue(JSON.stringify(#{json}, null, '\t'));
