@@ -12,21 +12,23 @@ Cuba.define do
       on param('q') do | hash |
         input = hash
         old = hash[ /=>/ ]
-        # hash = hash.to_s.stringify_keys
-        # if old
-          # hash = Hash[hash.to_s.gsub('{', '').gsub('}', '').split(",").collect{|x|
-          #     x.gsub(/:| |\'/,'').gsub('nil', 'null').split("=>")
-          # }]
-          # p hash
-          # hash = hash.stringify_keys
-          # p hash
-        # end
-        json = if hash && old
-          JSON.parse(hash.to_s.gsub('=>', ':')).to_json
-        else
-          hash
+        isjson = hash[/:{/]
+        unless isjson
+          hash = hash.to_s.gsub('{', '').gsub('}', '')
+          if old
+            hash = Hash[hash.split(",").collect{|x|
+                x.gsub(/:| |\'/,'').gsub('nil', 'null').split("=>")
+            }]
+          else
+            hash = Hash[hash.split(",").collect{|x|
+                x.gsub('nil', 'null').split(': :')
+            }]
+          end
+          hash = hash.stringify_keys
         end
-        hash.gsub!('\\','')
+        if hash
+          json = JSON.parse(hash.to_s.gsub('=>', ':').gsub('\\','')).to_json
+        end
         res.write render('templates/home.haml', hash: input , json: json)
       end
       res.write render('templates/home.haml', hash: '' , json: '')
@@ -35,11 +37,13 @@ Cuba.define do
 end
 
 
-# class Hash
-#   def stringify_keys
-#     t = self.dup
-#     self.clear
-#     t.each_pair{|k, v| self[k.to_s] = v}
-#     self
-#   end
-# end
+class Hash
+  def stringify_keys
+    t = self.dup
+    self.clear
+    t.each_pair{|k, v|
+      self[k.to_s.gsub(/^\"|\"$/, '')] = v.gsub(/^\"|\"$/, '')
+    }
+    self
+  end
+end
