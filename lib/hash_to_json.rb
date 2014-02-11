@@ -31,7 +31,7 @@ Cuba.define do
         end
         res.write render('templates/home.haml', hash: input , json: json)
       end
-      res.write render('templates/home.haml', hash: '' , json: '')
+      res.write render('templates/home.haml', hash: '' , json: '{}')
     end
   end
 end
