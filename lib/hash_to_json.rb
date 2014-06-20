@@ -12,19 +12,17 @@ Cuba.define do
       on param('q') do | hash |
         input = hash
         old = hash[ /=>/ ]
-        isjson = hash[/:{/]
+        isjson = hash[/:(|\ ){/]
         unless isjson
-          hash = hash.to_s.gsub('{', '').gsub('}', '')
           if old
-            hash = Hash[hash.split(",").collect{|x|
-                x.gsub(/:| |\'/,'').gsub('nil', 'null').split("=>")
-            }]
+            hash = hash.gsub('nil', 'null').gsub(/:(\s)/, "\"(\s)\"" ).gsub("=>",':')
           else
+            hash = hash.to_s.gsub('{', '').gsub('}', '')
             hash = Hash[hash.split(",").collect{|x|
                 x.gsub('nil', 'null').split(': :')
             }]
+            hash = hash.stringify_keys
           end
-          hash = hash.stringify_keys
         end
         if hash
           json = JSON.parse(hash.to_s.gsub('=>', ':').gsub('\\','')).to_json
